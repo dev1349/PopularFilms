@@ -1,24 +1,51 @@
 import logo from './logo.svg';
 import './App.css';
+import {useSelector,useDispatch} from "react-redux";
+import {useEffect} from "react";
+import {loadPopular} from "./store/asyncActions/loadPopular";
+import Header from "./components/Header";
+import {router} from './router/router'
+import {ThemeProvider} from "@mui/material";
+import theme from "./theme";
+import {loadTop} from "./store/asyncActions/loadTop";
+import {BrowserRouter,
+    Routes,
+    Route} from 'react-router-dom'
 
 function App() {
+  const films = useSelector(state => state.film)
+  const dispatch = useDispatch()
+
+    useEffect(()=> dispatch(loadPopular)
+    ,[])
+    useEffect(()=> dispatch(loadTop),[])
+    useEffect(()=>{
+        console.log(films)
+    },[films])
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+      <BrowserRouter>
+          <ThemeProvider theme={theme}>
+          <Header/>
+          <Routes>
+              {
+                  router.map((rout)=>
+                  {
+                      const Component = <rout.component/>
+                      return(
+                          <Route
+                              path={rout.path}
+                              element={Component}
+                              key={rout.path}
+                          />)
+                  })
+              }
+
+
+          </Routes>
+          </ThemeProvider>
+      </BrowserRouter>
+
+
   );
 }
 
